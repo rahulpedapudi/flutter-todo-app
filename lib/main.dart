@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/widgets/task_provider.dart';
 import './screens/home_screen.dart';
 import './screens/account_screen.dart';
 import './screens/calendar_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context) => TaskProvider())],
+      child: MyApp(),
+    ),
+  );
 }
 
 // Main App

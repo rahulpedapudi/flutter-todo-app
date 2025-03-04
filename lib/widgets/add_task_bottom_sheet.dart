@@ -1,7 +1,9 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/models/task.dart';
+import 'package:todo_app/widgets/task_provider.dart';
 
-void showAddTaskBottomSheet(BuildContext context, Function(MyTask) addTask) {
+void showAddTaskBottomSheet(BuildContext context) {
   String taskTitle = "";
   String taskDesc = "";
 
@@ -54,13 +56,14 @@ void showAddTaskBottomSheet(BuildContext context, Function(MyTask) addTask) {
                   style: TextButton.styleFrom(backgroundColor: Colors.blue),
                   onPressed: () {
                     if (taskTitle.isNotEmpty) {
-                      addTask(
+                      Provider.of<TaskProvider>(context, listen: false).addTask(
                         MyTask(
                           title: taskTitle,
                           description: taskDesc,
                           isCompleted: false,
                         ),
                       );
+                      Navigator.pop(context);
                     }
                   },
                   child: Text("Save Task"),

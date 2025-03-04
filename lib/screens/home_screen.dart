@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/widgets/task_provider.dart';
 import '../widgets/add_task_bottom_sheet.dart';
-import '../models/task.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -10,17 +11,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<MyTask> tasks = [];
-
-  void _addTask(MyTask task) {
-    setState(() {
-      tasks.add(task);
-    });
-    Navigator.pop(context);
-  }
-
   @override
   Widget build(BuildContext context) {
+    var taskProvider = Provider.of<TaskProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Home"),
@@ -28,39 +22,37 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
       ),
       body:
-          tasks.isEmpty
+          taskProvider.tasks.isEmpty
               ? Center(child: Text("No Tasks"))
               : ListView.builder(
-                itemCount: tasks.length,
+                itemCount: taskProvider.tasks.length,
                 itemBuilder: (context, index) {
                   return ListTile(
                     leading: Checkbox(
-                      value: tasks[index].isCompleted,
+                      value: taskProvider.tasks[index].isCompleted,
                       onChanged: (value) {
-                        setState(() {
-                          tasks[index].isCompleted = value!;
-                        });
+                        taskProvider.toggleTaskCompletion(index);
                       },
                     ),
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          tasks[index].title,
+                          taskProvider.tasks[index].title,
                           style: TextStyle(
                             fontSize: 20,
                             decoration:
-                                tasks[index].isCompleted
+                                taskProvider.tasks[index].isCompleted
                                     ? TextDecoration.lineThrough
                                     : null,
                           ),
                         ),
                         Text(
-                          tasks[index].description,
+                          taskProvider.tasks[index].description,
                           style: TextStyle(
                             fontSize: 16,
                             decoration:
-                                tasks[index].isCompleted
+                                taskProvider.tasks[index].isCompleted
                                     ? TextDecoration.lineThrough
                                     : null,
                             color: (Colors.grey),
@@ -72,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     trailing: IconButton(
                       onPressed: () {
                         setState(() {
-                          tasks.removeAt(index);
+                          taskProvider.tasks.removeAt(index);
                         });
                       },
                       icon: Icon(
@@ -85,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          showAddTaskBottomSheet(context, _addTask);
+          showAddTaskBottomSheet(context);
         },
         label: Text("New Task"),
         icon: Icon(Icons.add),
